@@ -1,0 +1,21 @@
+.hero {
+  align-items: center;
+  background: url(../../images/Hero.jpg);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  height: 490px;
+  justify-content: center;
+  left: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  position: relative;
+  right: 50%;
+  width: 100vw;
+}
+
+.title {
+  margin-bottom: 20px;
+  font-weight: 700;
+  font-size: 36px;
+}
