@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import './Button.css';
 
-function Button({ children, type = 'button', size, design, onClick }) {
+function Button({ children, type = 'button', size, design, onClick, id }) {
   const className = cx('Button', {
     'Button--small': size === 'small',
     'Button--outline': design === 'outline',
@@ -13,7 +13,7 @@ function Button({ children, type = 'button', size, design, onClick }) {
   // const className = ["Button", sizeClass, designClass].filter(Boolean).join(" ");
 
   return (
-    <button onClick={onClick} type={type} className={className}>
+    <button onClick={onClick} type={type} className={className} id={id}>
       {children}
     </button>
   );

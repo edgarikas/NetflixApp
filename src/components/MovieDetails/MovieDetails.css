@@ -1,0 +1,39 @@
+.errorTitle {
+  font-weight: 600px;
+  color: red;
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+.error {
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.movie {
+  max-width: 1120px;
+  max-height: 541px;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.movie__image img {
+  width: 316px;
+  height: 392px;
+}
+
+.movie__about--title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+.movie__about--buttons {
+  margin-top: 20px;
+}
+.movie__about--buttons a {
+  margin-right: 20px;
+}

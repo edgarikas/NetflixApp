@@ -1,106 +1,67 @@
 import './App.css';
 
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 
 import logo from './images/F.png';
 
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import Button from './components/Button/Button';
-import Hero from './components/Hero/Hero';
-import MovieCard from './components/MovieCard/MovieCard';
+
 import Login from './components/LoginPage/LoginPage';
 import HomePage from './components/HomePage/HomePage';
-
-const FREE_MOVIES_API =
-  'https://dummy-video-api.onrender.com/content/free-items';
-const FAVORITES_STORAGE_KEY = 'FELIX_FAVORITES';
+import LoggedUser from './components/LoggedUser/LoggedUser';
+import MovieDetails from './components/MovieDetails/MovieDetails';
 
 class App extends React.Component {
   state = {
-    loading: false,
-    error: false,
-    movies: [],
-    favorites:
-      JSON.parse(window.localStorage.getItem(FAVORITES_STORAGE_KEY)) || [],
+    authKey: JSON.parse(window.localStorage.getItem('authKey')),
   };
 
-  async componentDidMount() {
-    this.setState({ loading: true });
-
-    try {
-      const response = await fetch(FREE_MOVIES_API);
-
-      if (response.status > 399 && response.status < 600) {
-        throw new Error('failed to load');
-      }
-
-      const movies = await response.json();
-
-      this.setState({ movies });
-    } catch (error) {
-      this.setState({ error: true });
-    } finally {
-      this.setState({ loading: false });
-    }
-  }
-
-  persistFavorites = () => {
-    window.localStorage.setItem(
-      FAVORITES_STORAGE_KEY,
-      JSON.stringify(this.state.favorites)
-    );
-  };
-
-  toggleFavorite = (id) => {
-    const { favorites } = this.state;
-
-    if (favorites.includes(id)) {
-      this.setState((prevState) => {
-        return {
-          favorites: prevState.favorites.filter((movieId) => movieId !== id),
-        };
-      }, this.persistFavorites);
+  handleLogout = (e) => {
+    if (e.target.id === 'Logout') {
+      window.location.pathname = '/';
+      window.localStorage.removeItem('authKey');
     } else {
-      this.setState((prevState) => {
-        return { favorites: prevState.favorites.concat(id) };
-      }, this.persistFavorites);
+      window.location.pathname = '/login';
     }
   };
 
   render() {
-    const { movies, loading, error, favorites } = this.state;
-    <Routes>
-      <Route path='/login' element={<Login />} />
-    </Routes>;
+    const { authKey } = this.state;
+    console.log(authKey);
     return (
       <div className='App'>
-        <Header />
-
-        <main className='App_main'>
-          {loading && <p>Loading...</p>}
-          {error && <p>Whoops! 😱🏴‍☠️☁️</p>}
-          <Hero title='Wanna More Content?' btnTitle='Get Access' />
-
-          <div className='movie-list'>
-            {movies.map(({ title, id, description, image }) => (
-              <MovieCard
-                id={id}
-                key={id}
-                title={title}
-                description={description}
-                image={image}
-                isFavorite={favorites.includes(id)}
-                onToggleFavorite={() => this.toggleFavorite(id)}
+        <BrowserRouter>
+          <Header>
+            <Link to={authKey ? '/items' : '/'}>
+              <img
+                className='Header__logo'
+                design='outline'
+                src={logo}
+                alt='logo'
               />
-            ))}
-          </div>
+            </Link>
 
-          <div className='moreContent'>
-            <Button>Get More Content</Button>
-          </div>
-        </main>
+            <Button
+              id={authKey ? 'Logout' : 'Login'}
+              onClick={(e) => this.handleLogout(e)}
+              size='small'
+            >
+              {authKey ? 'Logout' : 'Login'}
+            </Button>
+          </Header>
+
+          <main className='App_main'>
+            <Routes>
+              <Route path='/' element={<HomePage />} />
+              <Route path='/login' element={<Login />} />
+              <Route path='/items' element={<LoggedUser />} />
+              <Route path='/items/:movieId' element={<MovieDetails />} />
+            </Routes>
+          </main>
+        </BrowserRouter>
 
         <Footer />
       </div>
@@ -110,11 +71,53 @@ class App extends React.Component {
 
 export default App;
 
-{
-  /* <BrowserRouter>
-  <Routes>
-    <Route path='/' element={<HomePage />}></Route>
-    <Route path='/login' element={<Login />}></Route>
-  </Routes>
-</BrowserRouter>; */
-}
+// function App() {
+//   const [authKey, setAuthKey] = useState(
+//     JSON.parse(window.localStorage.getItem('authKey'))
+//   );
+
+//   const handleLogout = (e) => {
+//     if (e.target.id === 'Logout') {
+//       window.location.pathname = '/';
+//       window.localStorage.removeItem('authKey');
+//     } else {
+//       window.location.pathname = '/login';
+//     }
+//   };
+
+//   return (
+//     <div className='App'>
+//       <BrowserRouter>
+//         <Header>
+//           <Link to={authKey ? '/items' : '/'}>
+//             <img
+//               className='Header__logo'
+//               design='outline'
+//               src={logo}
+//               alt='logo'
+//             />
+//           </Link>
+
+//           <Button
+//             id={authKey ? 'Logout' : 'Login'}
+//             onClick={(e) => handleLogout(e)}
+//             size='small'
+//           >
+//             {authKey ? 'Logout' : 'Login'}
+//           </Button>
+//         </Header>
+
+//         <main className='App_main'>
+//           <Routes>
+//             <Route path='/' element={<HomePage />} />
+//             <Route path='/login' element={<Login />} />
+//             <Route path='/items' element={<LoggedUser />} />
+//             <Route path='/items/:movieId' element={<MovieDetails />} />
+//           </Routes>
+//         </main>
+//       </BrowserRouter>
+
+//       <Footer />
+//     </div>
+//   );
+// }

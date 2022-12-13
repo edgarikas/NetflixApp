@@ -1,0 +1,115 @@
+.login {
+  position: relative;
+  height: 87vh;
+  width: 100vh;
+}
+
+.login__info {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #c4c4c4;
+  width: 380px;
+  padding: 50px 30px;
+  border-radius: 10px;
+}
+
+.login__info__data input {
+  width: 90%;
+  display: block;
+  padding: 10px;
+  color: black;
+  outline: none;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  border: none;
+  margin-top: 2px;
+}
+
+.login__info__data label {
+  color: black;
+  font-weight: 500;
+}
+
+.login__info__btn {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.login__info__error p {
+  color: red;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.icon {
+  position: absolute;
+  right: 12%;
+  top: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.iconWithErr {
+  top: 45%;
+}
+
+/* 
+
+.login {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  height: 85vh;
+  max-width: 1120px;
+}
+
+.login__info {
+  background: #c4c4c4;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 672px;
+  height: 376px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login__info__data {
+  margin: 0 auto;
+  width: 541px;
+  text-align: left;
+  color: black;
+}
+#error {
+  color: red;
+  font-weight: 600;
+}
+.login__info__data p {
+  color: black;
+  margin-top: 25px;
+  margin-bottom: 2px;
+  font-weight: 500;
+}
+.login__info__data input {
+  color: black;
+  height: 45px;
+}
+
+.login-btn {
+  text-align: center;
+  margin-top: 65px;
+}
+
+input {
+  color: black;
+  outline: none;
+  width: 541px;
+  height: 25px;
+  border-radius: 4px;
+  border: none;
+} */ ;

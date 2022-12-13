@@ -44,3 +44,7 @@
   overflow: hidden;
   margin-bottom: 18px;
 }
+
+.clickable {
+  cursor: pointer;
+}

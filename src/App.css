@@ -7,7 +7,6 @@
 
 .App_main {
   margin: 0 auto;
-  text-align: center;
 }
 
 .movie-list {
@@ -22,4 +21,5 @@
 
 .moreContent {
   margin-bottom: 30px;
+  text-align: center;
 }
