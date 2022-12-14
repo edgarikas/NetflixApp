@@ -1,6 +1,6 @@
 import './App.css';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 
 import logo from './images/F.png';
@@ -14,9 +14,13 @@ import HomePage from './components/HomePage/HomePage';
 import LoggedUser from './components/LoggedUser/LoggedUser';
 import MovieDetails from './components/MovieDetails/MovieDetails';
 
+const FAVORITES_STORAGE_KEY = 'FELIX_FAVORITES';
+
 class App extends React.Component {
   state = {
     authKey: JSON.parse(window.localStorage.getItem('authKey')),
+    favoritesMovies:
+      JSON.parse(window.localStorage.getItem(FAVORITES_STORAGE_KEY)) || [],
   };
 
   handleLogout = (e) => {
@@ -28,9 +32,18 @@ class App extends React.Component {
     }
   };
 
+  persistFavorites = (movie) => {
+    window.localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(movie));
+  };
+
+  setFavorites = (movie) => {
+    this.setState({ favoritesMovies: movie });
+    this.persistFavorites(movie);
+  };
+
   render() {
-    const { authKey } = this.state;
-    console.log(authKey);
+    const { authKey, favoritesMovies } = this.state;
+
     return (
       <div className='App'>
         <BrowserRouter>
@@ -55,10 +68,36 @@ class App extends React.Component {
 
           <main className='App_main'>
             <Routes>
-              <Route path='/' element={<HomePage />} />
+              <Route
+                path='/'
+                element={
+                  <HomePage
+                    favoritesMovies={favoritesMovies}
+                    setFavorites={this.setFavorites}
+                  />
+                }
+              />
               <Route path='/login' element={<Login />} />
-              <Route path='/items' element={<LoggedUser />} />
-              <Route path='/items/:movieId' element={<MovieDetails />} />
+              <Route
+                path='/items'
+                element={
+                  <LoggedUser
+                    auth={authKey}
+                    favoritesMovies={favoritesMovies}
+                    setFavorites={this.setFavorites}
+                  />
+                }
+              />
+              <Route
+                path='/items/:movieId'
+                element={
+                  <MovieDetails
+                    auth={authKey}
+                    favoritesMovies={favoritesMovies}
+                    setFavorites={this.setFavorites}
+                  />
+                }
+              />
             </Routes>
           </main>
         </BrowserRouter>

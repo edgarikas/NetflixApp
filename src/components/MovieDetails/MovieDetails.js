@@ -4,63 +4,53 @@ import { Link } from 'react-router-dom';
 import './MovieDetails.css';
 import Button from '../Button/Button';
 
-const FAVORITES_STORAGE_KEY = 'FELIX_FAVORITES';
-
 class MovieDetails extends React.Component {
   state = {
     movie: '',
     isDataExist: true,
-    favorites:
-      JSON.parse(window.localStorage.getItem(FAVORITES_STORAGE_KEY)) || [],
     isFavorite: false,
+    authKey: this.props.auth,
   };
   async componentDidMount() {
     const movieRef = window.location.pathname.split('/');
     const movieId = movieRef[2];
-    const { favorites } = this.state;
 
-    favorites.includes(movieId)
-      ? this.setState({ isFavorite: true })
-      : this.setState({ isFavorite: false });
+    const { authKey } = this.state;
+    const { favoritesMovies } = this.props;
 
-    try {
-      const response = await fetch(
-        `https://dummy-video-api.onrender.com/content/items/${movieId}`
-      );
-      if (response.ok) {
-        const movie = await response.json();
+    if (authKey) {
+      favoritesMovies.includes(movieId)
+        ? this.setState({ isFavorite: true })
+        : this.setState({ isFavorite: false });
 
-        this.setState({ movie });
-      } else {
-        this.setState({ isDataExist: false });
+      try {
+        const response = await fetch(
+          `https://dummy-video-api.onrender.com/content/items/${movieId}`
+        );
+        if (response.ok) {
+          const movie = await response.json();
+
+          this.setState({ movie });
+        } else {
+          this.setState({ isDataExist: false });
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } else window.location.pathname = '/';
   }
 
-  persistFavorites = () => {
-    window.localStorage.setItem(
-      FAVORITES_STORAGE_KEY,
-      JSON.stringify(this.state.favorites)
-    );
-  };
-
   toggleFavorite = (id) => {
-    const { favorites } = this.state;
+    const { favoritesMovies } = this.props;
 
-    if (favorites.includes(id)) {
+    if (favoritesMovies.includes(id)) {
       this.setState({ isFavorite: false });
-      this.setState((prevState) => {
-        return {
-          favorites: prevState.favorites.filter((movieId) => movieId !== id),
-        };
-      }, this.persistFavorites);
+      this.props.setFavorites(
+        favoritesMovies.filter((movieId) => movieId !== id)
+      );
     } else {
       this.setState({ isFavorite: true });
-      this.setState((prevState) => {
-        return { favorites: prevState.favorites.concat(id) };
-      }, this.persistFavorites);
+      this.props.setFavorites(this.props.favoritesMovies.concat(id));
     }
   };
   render() {

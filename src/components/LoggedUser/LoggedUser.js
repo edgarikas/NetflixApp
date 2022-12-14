@@ -3,7 +3,6 @@ import React from 'react';
 import MovieCard from '../MovieCard/MovieCard';
 import Loader from '../Loader/Loader';
 
-const FAVORITES_STORAGE_KEY = 'FELIX_FAVORITES';
 const MOVIES_API = 'https://dummy-video-api.onrender.com/content/items';
 
 class LoggedUser extends React.Component {
@@ -11,55 +10,46 @@ class LoggedUser extends React.Component {
     loading: false,
     error: false,
     movies: [],
-    favorites:
-      JSON.parse(window.localStorage.getItem(FAVORITES_STORAGE_KEY)) || [],
-    authKey: JSON.parse(window.localStorage.getItem('authKey')) || [],
+    authKey: this.props.auth,
   };
 
   async componentDidMount() {
     const { authKey } = this.state;
-    this.setState({ loading: true });
-    try {
-      const requestOption = {
-        method: 'GET',
-        headers: { authorization: authKey },
-      };
-      const response = await fetch(MOVIES_API, requestOption);
+    console.log(authKey);
+    if (authKey) {
+      this.setState({ loading: true });
+      try {
+        const requestOption = {
+          method: 'GET',
+          headers: { authorization: authKey },
+        };
+        const response = await fetch(MOVIES_API, requestOption);
 
-      const movies = await response.json();
+        const movies = await response.json();
 
-      this.setState({ movies });
-    } catch (error) {
-      this.setState({ error: true });
-    } finally {
-      this.setState({ loading: false });
-    }
+        this.setState({ movies });
+      } catch (error) {
+        this.setState({ error: true });
+      } finally {
+        this.setState({ loading: false });
+      }
+    } else window.location.pathname = '/';
   }
 
-  persistFavorites = () => {
-    window.localStorage.setItem(
-      FAVORITES_STORAGE_KEY,
-      JSON.stringify(this.state.favorites)
-    );
-  };
-
   toggleFavorite = (id) => {
-    const { favorites } = this.state;
+    const { favoritesMovies } = this.props;
 
-    if (favorites.includes(id)) {
-      this.setState((prevState) => {
-        return {
-          favorites: prevState.favorites.filter((movieId) => movieId !== id),
-        };
-      }, this.persistFavorites);
+    if (favoritesMovies.includes(id)) {
+      this.props.setFavorites(
+        favoritesMovies.filter((movieId) => movieId !== id)
+      );
     } else {
-      this.setState((prevState) => {
-        return { favorites: prevState.favorites.concat(id) };
-      }, this.persistFavorites);
+      this.props.setFavorites(this.props.favoritesMovies.concat(id));
     }
   };
   render() {
-    const { movies, loading, error, favorites } = this.state;
+    const { movies, loading, error } = this.state;
+    const { favoritesMovies } = this.props;
 
     return (
       <main className='App_main'>
@@ -76,7 +66,7 @@ class LoggedUser extends React.Component {
                 title={title}
                 description={description}
                 image={image}
-                isFavorite={favorites.includes(id)}
+                isFavorite={favoritesMovies.includes(id)}
                 onToggleFavorite={() => this.toggleFavorite(id)}
               ></MovieCard>
             ))}
