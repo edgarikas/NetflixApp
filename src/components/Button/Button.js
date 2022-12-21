@@ -3,6 +3,7 @@ import './Button.css';
 
 function Button({ children, type = 'button', size, design, onClick, id }) {
   const className = cx('Button', {
+    'Button--very--small': size === 'very--small',
     'Button--small': size === 'small',
     'Button--outline': design === 'outline',
   });

@@ -1,65 +1,62 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useCallback, useState, useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
 
 import './MovieDetails.css';
 import Button from '../Button/Button';
 
-class MovieDetails extends React.Component {
-  state = {
-    movie: '',
-    isDataExist: true,
-    isFavorite: false,
-    authKey: this.props.auth,
-  };
-  async componentDidMount() {
-    const movieRef = window.location.pathname.split('/');
-    const movieId = movieRef[2];
+function MovieDetails({ auth, favoritesMovies, toggleFavorite }) {
+  const [movie, setMovie] = useState('');
+  const [isDataExist, setIsDataExist] = useState(true);
+  const [authKey] = useState(auth);
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [retries, setRetries] = useState(3);
+  const { movieId } = useParams();
 
-    const { authKey } = this.state;
-    const { favoritesMovies } = this.props;
-
-    if (authKey) {
-      favoritesMovies.includes(movieId)
-        ? this.setState({ isFavorite: true })
-        : this.setState({ isFavorite: false });
-
+  const fetchMovie = useCallback(async () => {
+    if (authKey)
       try {
         const response = await fetch(
           `https://dummy-video-api.onrender.com/content/items/${movieId}`
         );
         if (response.ok) {
           const movie = await response.json();
-
-          this.setState({ movie });
+          setMovie(movie);
         } else {
-          this.setState({ isDataExist: false });
+          setIsDataExist(false);
         }
       } catch (error) {
-        console.log(error);
+        if (retries > 0) {
+          setRetries(retries - 1);
+        }
       }
-    } else window.location.pathname = '/';
-  }
+  }, [retries, authKey, movieId]);
 
-  toggleFavorite = (id) => {
-    const { favoritesMovies } = this.props;
+  useEffect(() => {
+    fetchMovie();
+  }, [fetchMovie]);
 
-    if (favoritesMovies.includes(id)) {
-      this.setState({ isFavorite: false });
-      this.props.setFavorites(
-        favoritesMovies.filter((movieId) => movieId !== id)
-      );
-    } else {
-      this.setState({ isFavorite: true });
-      this.props.setFavorites(this.props.favoritesMovies.concat(id));
-    }
+  const handleWatch = () => {
+    setShowTutorial(!showTutorial);
   };
-  render() {
-    const { movie, isDataExist, isFavorite } = this.state;
 
-    return (
-      <div>
-        {isDataExist ? (
-          <div className='movie'>
+  return (
+    <div>
+      {isDataExist ? (
+        <div>
+          <div className='iframe' id={showTutorial ? '' : 'hide'}>
+            <Button size='very--small' onClick={() => handleWatch()}>
+              X
+            </Button>
+            <iframe
+              title='movie-tutorial'
+              id={showTutorial ? '' : 'hide'}
+              src={movie.video}
+              frameBorder='0'
+              allowFullScreen
+            />
+          </div>
+
+          <div className='movie' id={showTutorial ? 'hide' : ''}>
             <div className='movie__image'>
               <img src={movie.image} alt='movieImage' />
             </div>
@@ -68,30 +65,31 @@ class MovieDetails extends React.Component {
               <p>{movie.description}</p>
 
               <div className='movie__about--buttons'>
-                <a target='_blank' href={movie.video} rel='noreferrer'>
-                  <Button size='small'>Watch</Button>
-                </a>
+                <Button size='small' onClick={() => handleWatch()}>
+                  Watch
+                </Button>
+
                 <Button
-                  design={isFavorite ? 'outline' : null}
-                  onClick={() => this.toggleFavorite(movie.id)}
+                  design={favoritesMovies.includes(movie.id) ? 'outline' : null}
+                  onClick={() => toggleFavorite(movie.id)}
                   size='small'
                 >
-                  {isFavorite ? 'Remove' : 'Add'}
+                  {favoritesMovies.includes(movie.id) ? 'Remove' : 'Add'}
                 </Button>
               </div>
             </div>
           </div>
-        ) : (
-          <div className='error'>
-            <h1 className='errorTitle'>This Movie Data is not exist...</h1>
-            <Link to='/items'>
-              <Button>Back To Movie List</Button>
-            </Link>
-          </div>
-        )}
-      </div>
-    );
-  }
+        </div>
+      ) : (
+        <div className='error'>
+          <h1 className='errorTitle'>This Movie Data is not exist...</h1>
+          <Link to='/items'>
+            <Button>Back To Movie List</Button>
+          </Link>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default MovieDetails;

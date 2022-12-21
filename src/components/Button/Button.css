@@ -13,6 +13,10 @@
   background: rgb(148, 2, 2);
 }
 
+.Button--very--small {
+  padding: 2px 12px;
+}
+
 .Button--small {
   padding: 7px 24px;
 }
