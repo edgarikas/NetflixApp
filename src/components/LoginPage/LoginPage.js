@@ -65,6 +65,7 @@ function Login() {
     window.location.pathname = '/items';
     window.localStorage.setItem('authKey', JSON.stringify(authKey.token));
   }
+
   return (
     <div className='login'>
       {loading && <p>Loading...</p>}
